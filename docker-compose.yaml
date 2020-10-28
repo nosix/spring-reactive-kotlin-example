@@ -1,0 +1,11 @@
+version: "3"
+services:
+  db:
+    image: postgres:13.0
+    container_name: "spring-reactive-example-db"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"

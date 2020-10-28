@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <title>Test Page</title>
+</head>
+<body>
+<form action="http://localhost:8080/customer" method="post">
+    <label>
+        <input type="text" name="firstName" value="First">
+    </label>
+    <label>
+        <input type="text" name="lastName" value="Last">
+    </label>
+    <button type="submit">POST</button>
+</form>
+
+<form action="http://localhost:8080/customer" method="get">
+    <label>
+        <input type="text" name="id">
+    </label>
+    <button type="submit">GET</button>
+</form>
+
+<form action="http://localhost:8080/customer/name" method="get">
+    <label>
+        <input type="text" name="lastName" value="Last">
+    </label>
+    <button type="submit">GET</button>
+</form>
+
+<form action="http://localhost:8080/customers" method="get">
+    <button type="submit">GET</button>
+</form>
+
+</body>
+</html>
