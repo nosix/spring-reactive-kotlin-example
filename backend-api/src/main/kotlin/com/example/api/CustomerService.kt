@@ -10,7 +10,7 @@ interface CustomerService {
     suspend fun getAllCustomer(): List<Customer>
 
     @GET("/customer")
-    suspend fun getCustomer(@Query("id") id: Long): Customer
+    suspend fun getCustomer(@Query("id") id: Long): Customer?
 
     @GET("/customer/name")
     suspend fun getCustomerByLastName(

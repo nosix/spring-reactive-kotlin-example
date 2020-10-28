@@ -1,4 +1,4 @@
-package com.example.backend
+package com.example.backend.repository
 
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.r2dbc.repository.Query

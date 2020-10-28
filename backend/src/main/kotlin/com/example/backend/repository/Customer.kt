@@ -1,12 +1,9 @@
-package com.example.backend
+package com.example.backend.repository
 
-import kotlinx.serialization.Serializable
 import org.springframework.data.annotation.Id
 
-@Serializable
 data class Customer(
-        @Id
-        val id: Long? = null,
+        @Id val id: Long? = null,
         val firstName: String,
         val lastName: String
 )

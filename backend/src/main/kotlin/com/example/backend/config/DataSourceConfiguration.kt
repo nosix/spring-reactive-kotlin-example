@@ -1,4 +1,4 @@
-package com.example.backend
+package com.example.backend.config
 
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration
 import io.r2dbc.postgresql.PostgresqlConnectionFactory
