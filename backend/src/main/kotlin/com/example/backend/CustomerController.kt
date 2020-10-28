@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.toList
 import org.springframework.data.repository.query.Param
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -34,7 +35,7 @@ class CustomerController(
 
     @PostMapping("customer")
     suspend fun postCustomer(
-        customer: Customer
+        @RequestBody customer: Customer
     ): Customer {
         return repository.save(customer)
     }
