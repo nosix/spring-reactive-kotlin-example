@@ -12,7 +12,7 @@ import org.springframework.data.r2dbc.connectionfactory.init.ConnectionFactoryIn
 import org.springframework.data.r2dbc.connectionfactory.init.ResourceDatabasePopulator
 
 @Configuration
-class DataSourceConfiguration : AbstractR2dbcConfiguration() {
+class DataSourceConfig : AbstractR2dbcConfiguration() {
 
     @Bean
     override fun connectionFactory(): ConnectionFactory {
@@ -27,6 +27,7 @@ class DataSourceConfiguration : AbstractR2dbcConfiguration() {
     @Bean
     fun initializer(
             @Qualifier("connectionFactory") connectionFactory: ConnectionFactory): ConnectionFactoryInitializer {
+        // FIXME remove warning
         return ConnectionFactoryInitializer().apply {
             setConnectionFactory(connectionFactory)
             setDatabasePopulator(ResourceDatabasePopulator(ClassPathResource("schema.sql")))

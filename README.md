@@ -1,3 +1,5 @@
+# 参考
+
 Reactive with Spring, Coroutines and Kotlin Flow
 - https://spring.io/blog/2019/04/12/going-reactive-with-spring-coroutines-and-kotlin-flow
 
@@ -10,4 +12,6 @@ DataSource Initializer
 - https://qiita.com/kazuki43zoo/items/bc036b433444f5c33dc4
 
 Spring Security
-- https://qiita.com/rubytomato@github/items/6c6318c948398fa62275
+- https://spring.pleiades.io/spring-security/site/docs/current/reference/html5/
+- https://qiita.com/rubytomato@github/items/eb595303430b35f4773d
+- https://stackoverflow.com/questions/56056404/disable-websession-creation-when-using-spring-security-with-spring-webflux

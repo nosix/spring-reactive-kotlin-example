@@ -26,7 +26,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 	implementation("io.r2dbc:r2dbc-postgresql:0.8.6.RELEASE")
 
-//	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("com.auth0:java-jwt:3.11.0")
 
 	implementation("org.springframework.boot:spring-boot-starter-webflux") {
 		exclude(module = "spring-boot-starter-json")
@@ -49,7 +50,7 @@ tasks.withType<Test> {
 
 tasks.withType<KotlinCompile> {
 	kotlinOptions {
-		freeCompilerArgs = listOf("-Xjsr305=strict")
+		freeCompilerArgs = listOf("-Xjsr305=strict", "-Xopt-in=kotlin.RequiresOptIn")
 		jvmTarget = "1.8"
 	}
 }
