@@ -1,4 +1,4 @@
-package com.example.backend.repository
+package com.example.backend.entity
 
 import org.springframework.data.annotation.Id
 

@@ -1,5 +1,6 @@
 package com.example.backend.repository
 
+import com.example.backend.entity.Customer
 import kotlinx.coroutines.flow.Flow
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository

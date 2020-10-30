@@ -23,7 +23,6 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.User
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
@@ -63,25 +62,6 @@ class SecurityConfig {
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
-
-    /**
-     * インメモリでユーザー情報を保持する場合の設定
-     */
-    @Bean
-    fun userDetailsService(passwordEncoder: PasswordEncoder): ReactiveUserDetailsService {
-        return MapReactiveUserDetailsService(
-            User.withUsername("user")
-                .passwordEncoder(passwordEncoder::encode)
-                .password("password")
-                .roles("USER")
-                .build(),
-            User.withUsername("admin")
-                .passwordEncoder(passwordEncoder::encode)
-                .password("admin")
-                .roles("USER", "ADMIN")
-                .build()
-        )
-    }
 
     @Bean
     fun authenticationManager(
