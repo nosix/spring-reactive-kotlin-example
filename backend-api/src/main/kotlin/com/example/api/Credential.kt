@@ -2,9 +2,8 @@ package com.example.api
 
 import kotlinx.serialization.Serializable
 
-// TODO change to Credential
 @Serializable
-data class AuthenticationInfo(
+data class Credential(
     val mailAddress: String,
     val password: String
 )

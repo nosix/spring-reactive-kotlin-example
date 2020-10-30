@@ -38,7 +38,7 @@ class CustomerServiceTests {
 
     @Test
     fun getAllCustomer(): Unit = runBlocking {
-        val authHeader: String? = authService.login(AuthenticationInfo("user", "user_password")).run {
+        val authHeader: String? = authService.login(Credential("user", "user_password")).run {
             if (isSuccessful) headers().get("Authorization") else null
         }
         println(authHeader)
