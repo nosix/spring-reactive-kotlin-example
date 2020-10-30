@@ -15,6 +15,7 @@ Spring Security
 - https://spring.pleiades.io/spring-security/site/docs/current/reference/html5/
 - https://qiita.com/rubytomato@github/items/eb595303430b35f4773d
 - https://stackoverflow.com/questions/56056404/disable-websession-creation-when-using-spring-security-with-spring-webflux
+- https://security.stackexchange.com/questions/95972/what-are-requirements-for-hmac-secret-key
 
 Retrofit
 - https://stackoverflow.com/questions/41078866/retrofit2-authorization-global-interceptor-for-access-token

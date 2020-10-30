@@ -44,6 +44,7 @@ import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import reactor.core.publisher.Mono
 import java.util.*
+import kotlin.random.Random
 import kotlin.time.ExperimentalTime
 import kotlin.time.minutes
 
@@ -57,7 +58,7 @@ class SecurityConfig {
 
     private val loginPath = "/login"
     private val adminPath = "/admin"
-    private val secret = "secret"
+    private val secret = Base64.getUrlEncoder().encodeToString(Random.nextBytes(128 / 8))
     private val algorithm = Algorithm.HMAC512(secret)
 
     @Bean
