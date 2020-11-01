@@ -3,21 +3,22 @@ package com.example.api
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface CustomerService {
-    @GET("/customers")
+    @GET("customers")
     suspend fun getAllCustomer(): List<Customer>
 
-    @GET("/customer")
-    suspend fun getCustomer(@Query("id") id: Long): Customer?
+    @GET("customers/{id}")
+    suspend fun getCustomer(@Path("id") id: Long): Customer?
 
-    @GET("/customer/name")
+    @GET("customers/search")
     suspend fun getCustomerByLastName(
         @Query("lastName") lastName: String
     ): List<Customer>
 
-    @POST("/customer")
+    @POST("customers")
     suspend fun postCustomer(
         @Body customer: Customer
     ): Customer
