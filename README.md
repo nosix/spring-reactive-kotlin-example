@@ -6,7 +6,8 @@ Reactive with Spring, Coroutines and Kotlin Flow
 R2DBC
 - https://medium.com/@thomasandolf/r2dbc-getting-started-d0afcfc05be2
 - https://spring.pleiades.io/guides/gs/accessing-data-r2dbc/
-- https://spring.pleiades.io/spring-data/r2dbc/docs/current-SNAPSHOT/reference/html/#r2dbc.getting-started
+- https://spring.pleiades.io/spring-data/r2dbc/docs/1.1.3.RELEASE/reference/html/
+- https://spring.pleiades.io/spring-data/r2dbc/docs/current-SNAPSHOT/reference/html/
 
 DataSource Initializer
 - https://qiita.com/kazuki43zoo/items/bc036b433444f5c33dc4

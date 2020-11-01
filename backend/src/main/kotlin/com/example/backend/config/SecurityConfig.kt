@@ -2,7 +2,7 @@ package com.example.backend.config
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.example.api.Credential
+import com.example.api.Credentials
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import org.springframework.context.annotation.Bean
@@ -139,7 +139,7 @@ class SecurityConfig {
                     override fun hints(): Map<String, Any> = mapOf()
                 })
                 .map {
-                    val auth = Json.decodeFromString<Credential>(it)
+                    val auth = Json.decodeFromString<Credentials>(it)
                     UsernamePasswordAuthenticationToken(auth.mailAddress, auth.password)
                 }
         }
