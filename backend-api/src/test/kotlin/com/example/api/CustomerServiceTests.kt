@@ -22,6 +22,13 @@ class CustomerServiceTests {
         }
     }
 
+    private suspend fun authenticateAsAdmin() {
+        factory.authenticate {
+            factory.create<AuthenticationService>()
+                .login(Credentials("admin", "admin_password"))
+        }
+    }
+
     @Test
     fun getAllCustomer(): Unit = runBlocking {
         authenticate()
@@ -46,6 +53,13 @@ class CustomerServiceTests {
     @Test
     fun postCustomer(): Unit = runBlocking {
         authenticate()
+        val customer = customerService.postCustomer(Customer("First", "Last"))
+        println(customer)
+    }
+
+    @Test
+    fun postCustomerAsAdmin(): Unit = runBlocking {
+        authenticateAsAdmin()
         val customer = customerService.postCustomer(Customer("First", "Last"))
         println(customer)
     }
