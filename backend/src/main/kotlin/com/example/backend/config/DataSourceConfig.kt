@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.ClassPathResource
 import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration
-import org.springframework.data.r2dbc.connectionfactory.init.ConnectionFactoryInitializer
-import org.springframework.data.r2dbc.connectionfactory.init.ResourceDatabasePopulator
+import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer
+import org.springframework.r2dbc.connection.init.ResourceDatabasePopulator
 
 @Configuration
 class DataSourceConfig : AbstractR2dbcConfiguration() {
@@ -26,8 +26,8 @@ class DataSourceConfig : AbstractR2dbcConfiguration() {
 
     @Bean
     fun initializer(
-            @Qualifier("connectionFactory") connectionFactory: ConnectionFactory): ConnectionFactoryInitializer {
-        // FIXME remove warning
+            @Qualifier("connectionFactory") connectionFactory: ConnectionFactory
+    ): ConnectionFactoryInitializer {
         return ConnectionFactoryInitializer().apply {
             setConnectionFactory(connectionFactory)
             setDatabasePopulator(ResourceDatabasePopulator(ClassPathResource("schema.sql")))
