@@ -40,14 +40,14 @@ class CustomerApiTests {
 
     private suspend fun authenticate() {
         factory.authenticate {
-            factory.create<AuthenticationService>()
+            create<AuthenticationService>()
                 .login(Credentials("user", "user_password"))
         }
     }
 
     private suspend fun authenticateAsAdmin() {
         factory.authenticate {
-            factory.create<AuthenticationService>()
+            create<AuthenticationService>()
                 .login(Credentials("admin", "admin_password"))
         }
     }

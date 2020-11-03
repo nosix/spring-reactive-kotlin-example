@@ -43,7 +43,7 @@ class WebServiceFactory(baseUrl: String) {
         return retrofit.create(service.java)
     }
 
-    suspend fun authenticate(action: suspend () -> Response<Unit>) {
+    suspend fun authenticate(action: suspend WebServiceFactory.() -> Response<Unit>) {
         val authHeader: String? = action().run {
             if (isSuccessful) headers().get("Authorization") else null
         }
