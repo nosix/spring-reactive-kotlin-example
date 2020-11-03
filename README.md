@@ -23,3 +23,7 @@ JWT
 
 Retrofit
 - https://stackoverflow.com/questions/41078866/retrofit2-authorization-global-interceptor-for-access-token
+- https://github.com/square/retrofit/issues/1554
+
+Kotlinx Serialization
+- https://github.com/Kotlin/kotlinx.serialization/issues/678

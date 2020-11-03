@@ -5,8 +5,11 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
+import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 class WebServiceFactory(baseUrl: String) {
@@ -28,6 +31,7 @@ class WebServiceFactory(baseUrl: String) {
 
     @OptIn(ExperimentalSerializationApi::class)
     private val retrofit = Retrofit.Builder()
+        .addConverterFactory(NullOnEmptyConverterFactory)
         .addConverterFactory(Json.asConverterFactory(MediaType.get("application/json")))
         .baseUrl(baseUrl)
         .client(client)
@@ -48,5 +52,18 @@ class WebServiceFactory(baseUrl: String) {
 
     fun reset() {
         securityContext.authHeader = null
+    }
+
+    private object NullOnEmptyConverterFactory : Converter.Factory() {
+        override fun responseBodyConverter(
+            type: Type,
+            annotations: Array<out Annotation>,
+            retrofit: Retrofit
+        ): Converter<ResponseBody, Any?>? {
+            val delegate = retrofit.nextResponseBodyConverter<Any?>(this, type, annotations)
+            return Converter<ResponseBody, Any?> {
+                if (it.contentLength() == 0L) null else delegate.convert(it)
+            }
+        }
     }
 }

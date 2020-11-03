@@ -25,7 +25,7 @@ class CustomerController(
     private fun Customer.asEntity(): CustomerEntity = CustomerEntity(id, firstName, lastName)
 
     @GetMapping("customers")
-    override suspend fun getAllCustomer(): List<Customer> {
+    override suspend fun getAllCustomers(): List<Customer> {
         return repository.findAll().asApi()
     }
 
@@ -37,7 +37,7 @@ class CustomerController(
     }
 
     @GetMapping("customers/search")
-    override suspend fun getCustomerByLastName(
+    override suspend fun getCustomersByLastName(
         @Param("lastName") lastName: String
     ): List<Customer> {
         return repository.findByLastName(lastName).asApi()

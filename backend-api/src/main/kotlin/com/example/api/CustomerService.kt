@@ -8,13 +8,13 @@ import retrofit2.http.Query
 
 interface CustomerService {
     @GET("customers")
-    suspend fun getAllCustomer(): List<Customer>
+    suspend fun getAllCustomers(): List<Customer>
 
     @GET("customers/{id}")
     suspend fun getCustomer(@Path("id") id: Long): Customer?
 
     @GET("customers/search")
-    suspend fun getCustomerByLastName(
+    suspend fun getCustomersByLastName(
         @Query("lastName") lastName: String
     ): List<Customer>
 
