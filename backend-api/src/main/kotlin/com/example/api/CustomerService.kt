@@ -11,7 +11,7 @@ interface CustomerService {
     suspend fun getAllCustomers(): List<Customer>
 
     @GET("customers/{id}")
-    suspend fun getCustomer(@Path("id") id: Long): Customer?
+    suspend fun getCustomer(@Path("id") id: Long): Optional<Customer>
 
     @GET("customers/search")
     suspend fun getCustomersByLastName(

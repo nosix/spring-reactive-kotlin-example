@@ -106,7 +106,7 @@ class CustomerApiTests {
         Mockito
             .`when`(customerRepository.findById(1))
             .thenReturn(entity)
-        val customer = customerService.getCustomer(1)
+        val customer = customerService.getCustomer(1).unboxed
         assertEquals(expected, customer)
     }
 

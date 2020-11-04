@@ -2,6 +2,7 @@ package com.example.backend.controller
 
 import com.example.api.Customer
 import com.example.api.CustomerService
+import com.example.api.Optional
 import com.example.backend.repository.CustomerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -32,8 +33,8 @@ class CustomerController(
     @GetMapping("customers/{id}")
     override suspend fun getCustomer(
         @PathVariable("id") id: Long
-    ): Customer? {
-        return repository.findById(id)?.asApi()
+    ): Optional<Customer> {
+        return Optional(repository.findById(id)?.asApi())
     }
 
     @GetMapping("customers/search")
