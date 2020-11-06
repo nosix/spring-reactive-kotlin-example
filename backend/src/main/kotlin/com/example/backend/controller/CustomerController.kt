@@ -7,11 +7,11 @@ import com.example.backend.repository.CustomerRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
-import org.springframework.data.repository.query.Param
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import com.example.backend.entity.Customer as CustomerEntity
 
@@ -39,7 +39,7 @@ class CustomerController(
 
     @GetMapping("customers/search")
     override suspend fun getCustomersByLastName(
-        @Param("lastName") lastName: String
+        @RequestParam("lastName") lastName: String
     ): List<Customer> {
         return repository.findByLastName(lastName).asApi()
     }
