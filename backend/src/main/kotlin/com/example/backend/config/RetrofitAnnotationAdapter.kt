@@ -1,6 +1,5 @@
 package com.example.backend.config
 
-import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxRegistrations
 import org.springframework.context.ApplicationContext
@@ -36,6 +35,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.lang.reflect.AnnotatedElement
+import java.lang.reflect.InvocationHandler
 import java.lang.reflect.Method
 import java.lang.reflect.Proxy
 import kotlin.reflect.KClass
@@ -102,10 +102,10 @@ class RetrofitAnnotationAdapter : WebFluxRegistrations {
                 return when (val annotation = annotations.firstOrNull {
                     it.annotationClass in MAPPING_ANNOTATIONS
                 }) {
-                    is GET -> createRequestMapping(annotation.value, arrayOf(RequestMethod.GET))
-                    is POST -> createRequestMapping(annotation.value, arrayOf(RequestMethod.POST))
-                    is PUT -> createRequestMapping(annotation.value, arrayOf(RequestMethod.PUT))
-                    is DELETE -> createRequestMapping(annotation.value, arrayOf(RequestMethod.DELETE))
+                    is GET -> RetrofitRequestMapping(annotation.value, RequestMethod.GET).toRequestMapping()
+                    is POST -> RetrofitRequestMapping(annotation.value, RequestMethod.POST).toRequestMapping()
+                    is PUT -> RetrofitRequestMapping(annotation.value, RequestMethod.PUT).toRequestMapping()
+                    is DELETE -> RetrofitRequestMapping(annotation.value, RequestMethod.DELETE).toRequestMapping()
                     else -> null
                 }
             }
@@ -210,21 +210,21 @@ class RetrofitAnnotationAdapter : WebFluxRegistrations {
             if (!hasPathVariable) {
                 method?.forEachImplementingMethod {
                     parameters[parameterIndex].getAnnotation(Path::class.java)?.let {
-                        annotations.add(createPathVariableAnnotation(it.value))
+                        annotations.add(it.toPathVariable())
                     }
                 }
             }
             if (!hasRequestParam) {
                 method?.forEachImplementingMethod {
                     parameters[parameterIndex].getAnnotation(Query::class.java)?.let {
-                        annotations.add(createRequestParamAnnotation(it.value))
+                        annotations.add(it.toRequestParam())
                     }
                 }
             }
             if (!hasRequestBody) {
                 method?.forEachImplementingMethod {
                     parameters[parameterIndex].getAnnotation(Body::class.java)?.let {
-                        annotations.add(createRequestBodyAnnotation())
+                        annotations.add(it.toRequestBody())
                     }
                 }
             }
@@ -243,89 +243,82 @@ private inline fun AnnotatedElement.forEachImplementingMethod(action: Method.() 
     }
 }
 
-private inline fun <reified T : Annotation> create(
-    crossinline methodImpl: Method.(args: Array<Any>?) -> Any?
-): T {
-    return Proxy.newProxyInstance(T::class.java.classLoader, arrayOf(T::class.java)) { _, method, args ->
-        method?.methodImpl(args)
-    } as T
+private inline fun <reified R> newInstance(handler: InvocationHandler): R {
+    return Proxy.newProxyInstance(R::class.java.classLoader, arrayOf(R::class.java), handler) as R
 }
 
-private fun createRequestMapping(path: String, method: Array<RequestMethod>): RequestMapping {
-    return create {
-        when (this.name) {
-            "value" -> arrayOf(path)
-            "path" -> arrayOf(path)
-            "name" -> ""
-            "method" -> method
-            "params" -> emptyArray<String>()
-            "headers" -> emptyArray<String>()
-            "consumes" -> emptyArray<String>()
-            "produces" -> emptyArray<String>()
-            "toString" -> RequestMapping::class.qualifiedName
-            else -> error("'${this.name}' is not supported.")
-        }
+private inline fun <reified T : Annotation, reified R : Annotation> T.invocationHandler(
+    properties: Map<String, Any?>,
+    crossinline equalsImpl: T.(R) -> Boolean
+) = InvocationHandler { _, method, args ->
+    when (method.name) {
+        "annotationType" -> R::class.java
+        "toString" -> R::class.qualifiedName
+        "hashCode" -> properties.hashCode()
+        "equals" -> args != null && (args[0] as? R)?.let { equalsImpl(it) } ?: false
+        in properties -> properties[method.name]
+        else -> error("'${method.name}' is not supported.")
     }
 }
 
-private fun createRequestParamAnnotation(name: String): RequestParam {
-    return create { args ->
-        val properties = mapOf(
-            "value" to name,
-            "name" to name,
-            "required" to true, // TODO support optional
+private class RetrofitRequestMapping(val path: String, val method: RequestMethod) : Annotation {
+
+    fun toRequestMapping(): RequestMapping {
+        val pathValue = arrayOf(path)
+        val methodValue = arrayOf(method)
+        return newInstance(invocationHandler<RetrofitRequestMapping, RequestMapping>(
+            properties = mapOf(
+                "value" to pathValue,
+                "path" to pathValue,
+                "name" to "",
+                "method" to methodValue,
+                "params" to emptyArray<String>(),
+                "headers" to emptyArray<String>(),
+                "consumes" to emptyArray<String>(),
+                "produces" to emptyArray<String>()
+            ),
+            equalsImpl = {
+                (it.path.size == 1 && it.path.first() == path) &&
+                        (it.method.size == 1 && it.method.first() == method)
+            }
+        ))
+    }
+}
+
+private fun Query.toRequestParam(): RequestParam {
+    return newInstance(invocationHandler<Query, RequestParam>(
+        properties = mapOf(
+            "value" to value,
+            "name" to value,
+            "required" to true,
             "defaultValue" to ValueConstants.DEFAULT_NONE
-        )
-        when (this.name) {
-            "annotationType" -> RequestParam::class.java
-            "toString" -> RequestParam::class.qualifiedName
-            "hashCode" -> properties.hashCode()
-            "equals" -> args != null &&
-                    (args[0] as? RequestParam)?.let { other ->
-                        other.name == name
-                    } ?: false
-            in properties -> properties[this.name]
-            else -> error("'${this.name}' is not supported.")
+        ),
+        equalsImpl = {
+            it.name == value && it.required && it.defaultValue == ValueConstants.DEFAULT_NONE
         }
-    }
+    ))
 }
 
-private fun createPathVariableAnnotation(name: String): PathVariable {
-    return create { args ->
-        val properties = mapOf(
-            "value" to name,
-            "name" to name,
-            "required" to true // TODO support optional
-        )
-        when (this.name) {
-            "annotationType" -> PathVariable::class.java
-            "toString" -> PathVariable::class.qualifiedName
-            "hashCode" -> properties.hashCode()
-            "equals" -> args != null &&
-                    (args[0] as? PathVariable)?.let { other ->
-                        other.name == name
-                    } ?: false
-            in properties -> properties[this.name]
-            else -> error("'${this.name}' is not supported.")
+private fun Path.toPathVariable(): PathVariable {
+    return newInstance(invocationHandler<Path, PathVariable>(
+        properties = mapOf(
+            "value" to value,
+            "name" to value,
+            "required" to true
+        ),
+        equalsImpl = {
+            it.name == value && it.required
         }
-    }
+    ))
 }
 
-private fun createRequestBodyAnnotation(): RequestBody {
-    return create { args ->
-        val properties = mapOf(
-            "required" to true // TODO support optional
-        )
-        when (this.name) {
-            "annotationType" -> RequestBody::class.java
-            "toString" -> RequestBody::class.qualifiedName
-            "hashCode" -> properties.hashCode()
-            "equals" -> args != null &&
-                    (args[0] as? RequestBody)?.let {
-                        true
-                    } ?: false
-            in properties -> properties[this.name]
-            else -> error("'${this.name}' is not supported.")
+private fun Body.toRequestBody(): RequestBody {
+    return newInstance(invocationHandler<Body, RequestBody>(
+        properties = mapOf(
+            "required" to true
+        ),
+        equalsImpl = {
+            it.required
         }
-    }
+    ))
 }
