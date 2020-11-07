@@ -192,43 +192,50 @@ class RetrofitAnnotationAdapter : WebFluxRegistrations {
 
     private class HandlerMethodParameterWrapper(parameter: MethodParameter) : MethodParameter(parameter) {
 
+        private var parameterAnnotations: Array<Annotation>? = null
+
         // Query -> RequestParam
         // Path -> PathVariable
         // Body -> RequestBody
         override fun getParameterAnnotations(): Array<Annotation> {
-            val annotations = super.getParameterAnnotations().toMutableList()
-            var hasRequestParam = false
-            var hasPathVariable = false
-            var hasRequestBody = false
-            for (annotation in annotations) {
-                when (annotation) {
-                    is RequestParam -> hasRequestParam = true
-                    is PathVariable -> hasPathVariable = true
-                    is RequestBody -> hasRequestBody = true
-                }
-            }
-            if (!hasPathVariable) {
-                method?.forEachImplementingMethod {
-                    parameters[parameterIndex].getAnnotation(Path::class.java)?.let {
-                        annotations.add(it.toPathVariable())
+            return parameterAnnotations ?: run {
+                val annotations = super.getParameterAnnotations().toMutableList()
+                var hasRequestParam = false
+                var hasPathVariable = false
+                var hasRequestBody = false
+                for (annotation in annotations) {
+                    when (annotation) {
+                        is RequestParam -> hasRequestParam = true
+                        is PathVariable -> hasPathVariable = true
+                        is RequestBody -> hasRequestBody = true
                     }
                 }
-            }
-            if (!hasRequestParam) {
                 method?.forEachImplementingMethod {
-                    parameters[parameterIndex].getAnnotation(Query::class.java)?.let {
-                        annotations.add(it.toRequestParam())
+                    parameters[parameterIndex].run {
+                        if (!hasRequestParam) {
+                            getAnnotation(Query::class.java)?.let {
+                                annotations.add(it.toRequestParam())
+                                hasRequestParam = true
+                            }
+                        }
+                        if (!hasPathVariable) {
+                            getAnnotation(Path::class.java)?.let {
+                                annotations.add(it.toPathVariable())
+                                hasPathVariable = true
+                            }
+                        }
+                        if (!hasRequestBody) {
+                            getAnnotation(Body::class.java)?.let {
+                                annotations.add(it.toRequestBody())
+                                hasRequestBody = true
+                            }
+                        }
                     }
                 }
-            }
-            if (!hasRequestBody) {
-                method?.forEachImplementingMethod {
-                    parameters[parameterIndex].getAnnotation(Body::class.java)?.let {
-                        annotations.add(it.toRequestBody())
-                    }
+                annotations.toTypedArray().also {
+                    parameterAnnotations = it
                 }
             }
-            return annotations.toTypedArray()
         }
     }
 }
